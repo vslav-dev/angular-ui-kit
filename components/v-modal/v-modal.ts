@@ -45,6 +45,8 @@ export class VModal {
   public readonly deviceType = input<ModalDeviceType>();
   public readonly isOpen = input<boolean>(false);
   public readonly isCloseButtonVisible = input<boolean>(false);
+  // false: the page behind stays visible; clicking outside the modal still closes it.
+  public readonly isBackdropDimmed = input<boolean>(true);
   public readonly width = input<string>('min(100vw, 400px)');
   public readonly mobileWidth = input<string>();
   public readonly desktopWidth = input<string>();

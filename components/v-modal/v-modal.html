@@ -1,6 +1,7 @@
 @if (isOpen()) {
   <div class="modal-container"
        [vBackdrop]="isOpen()"
+       [isDimmed]="isBackdropDimmed()"
        (backdropClick)="closeModal()"
        (click)="$event.stopPropagation()">
     <div class="modal-content">

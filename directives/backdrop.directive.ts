@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Inject, OnDestroy, Optional, effect, input, output } from '@angular/core';
+import { Directive, ElementRef, Inject, OnDestroy, Optional, computed, effect, input, output } from '@angular/core';
 import { PARENT_LAYER_ID, ZLayerService } from '@ui-kit/services/z-layer.service';
 
 @Directive({
@@ -7,8 +7,12 @@ import { PARENT_LAYER_ID, ZLayerService } from '@ui-kit/services/z-layer.service
 export class VBackdropDirective implements OnDestroy {
   public readonly isWithBackdrop = input<boolean>(false, { alias: 'vBackdrop' });
   public readonly backdropOpacity = input<number>(0.5);
+  // false: the backdrop stays in place and still catches outside clicks, but is see-through.
+  public readonly isDimmed = input<boolean>(true);
 
   public readonly backdropClick = output<void>();
+
+  private readonly backdropColor$$ = computed(() => `rgba(0, 0, 0, ${this.isDimmed() ? this.backdropOpacity() : 0})`);
 
   private backdropElement: HTMLElement | null = null;
   private clickListener: ((event: Event) => void) | null = null;
@@ -27,6 +31,11 @@ export class VBackdropDirective implements OnDestroy {
       } else {
         this.hideBackdrop();
       }
+    });
+
+    effect(() => {
+      const color = this.backdropColor$$();
+      if (this.backdropElement) this.backdropElement.style.backgroundColor = color;
     });
   }
 
@@ -52,7 +61,8 @@ export class VBackdropDirective implements OnDestroy {
     this.backdropElement.style.left = '0';
     this.backdropElement.style.width = '100vw';
     this.backdropElement.style.height = '100vh';
-    this.backdropElement.style.backgroundColor = `rgba(0, 0, 0, ${this.backdropOpacity()})`;
+    this.backdropElement.style.backgroundColor = this.backdropColor$$();
+    this.backdropElement.style.transition = 'background-color 0.15s';
     this.backdropElement.style.zIndex = this.getBackdropZIndex().toString();
     this.backdropElement.style.cursor = 'pointer';
 
