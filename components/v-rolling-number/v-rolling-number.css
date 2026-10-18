@@ -35,6 +35,12 @@
   top: 0;
   left: 0;
   width: 100%;
-  white-space: pre;
+}
+
+.rn-row {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
   text-align: center;
 }

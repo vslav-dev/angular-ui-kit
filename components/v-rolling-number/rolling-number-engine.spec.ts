@@ -1,8 +1,28 @@
 import { __testing } from './rolling-number-engine';
 
-const { graphemes, parseNumberShape, diffChars, springStateAt, springDuration } = __testing;
+const { graphemes, parseNumberShape, diffChars, springStateAt, springDuration, rowPitchPx } = __testing;
 
 describe('rolling-number-engine', () => {
+  describe('rowPitchPx', () => {
+    // Browser zoom 50%..200% on 1x and 2x displays.
+    const dprs = [0.5, 0.6, 0.75, 0.8, 1, 1.1, 1.25, 1.34, 1.5, 1.6, 1.8, 2, 2.2, 2.5, 3, 3.5, 4];
+    const hostHeights = [14, 20.8, 23.994, 24, 31.5];
+
+    it('puts every digit row on a whole device pixel and keeps the 2px gap', () => {
+      for (const dpr of dprs) {
+        for (const height of hostHeights) {
+          const pitch = rowPitchPx(height, dpr);
+          expect(pitch).toBeGreaterThanOrEqual(height + 2);
+          expect(pitch).toBeLessThan(height + 2 + 1 / dpr + 1e-9);
+          for (let row = 0; row < 10; row++) {
+            const deviceOffset = row * pitch * dpr;
+            expect(Math.abs(deviceOffset - Math.round(deviceOffset))).toBeLessThan(1e-9);
+          }
+        }
+      }
+    });
+  });
+
   describe('parseNumberShape', () => {
     it('returns null for text with no digits', () => {
       expect(parseNumberShape(graphemes('--'))).toBeNull();

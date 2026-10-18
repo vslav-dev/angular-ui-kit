@@ -50,7 +50,20 @@ function buildTiming(speedMs: number): Timing {
   };
 }
 
-const STRIP_ROWS = '9\n8\n7\n6\n5\n4\n3\n2\n1\n0';
+// A digit cell's strip holds one row per digit, 9 at the top down to 0 (see digitOffset).
+const STRIP_DIGITS = ['9', '8', '7', '6', '5', '4', '3', '2', '1', '0'];
+
+// Row pitch (the distance between two digit rows, also the rows' line-height) rounded up
+// to a whole number of *device* pixels. Text is snapped to the device-pixel grid when
+// painted, so rows sitting at fractional device offsets from each other (any non-integer
+// page zoom / dpr, e.g. 26px * 1.6 = 41.6) land on different snapped baselines and the
+// settled digits end up at visibly different heights. With an integer-device pitch every
+// row — and every translateY offset of the strip, which is a multiple of the pitch —
+// shares the same fractional part, so all of them snap identically. The +2 is the gap
+// that keeps neighbouring digits out of the cell's clip box.
+function rowPitchPx(hostHeight: number, dpr: number): number {
+  return Math.ceil((hostHeight + 2) * dpr) / dpr;
+}
 
 // A cell's width is the glyph's exact advance width (see measureFrames), but a glyph's
 // painted ink can overhang that advance box by a hair — bold digits with a diagonal
@@ -375,11 +388,15 @@ export class RollingNumberEngine {
   public commit(text: string, snap = false): void {
     this.staticTextEl.textContent = text;
     const newChars = graphemes(text);
-    this.rowHeight = this.hostEl.getBoundingClientRect().height + 2;
+    // Cells bake the pitch into their rows at mount, so a changed pitch (page zoom, font
+    // size) invalidates them all — remount instead of mixing pitches.
+    const rowHeight = rowPitchPx(this.hostEl.getBoundingClientRect().height, window.devicePixelRatio);
+    const pitchChanged = rowHeight !== this.rowHeight;
+    this.rowHeight = rowHeight;
     const frames = measureFrames(this.hostEl, this.staticTextEl, newChars);
     const reduced = prefersReducedMotion();
 
-    if (snap || this.chars.length === 0) {
+    if (snap || pitchChanged || this.chars.length === 0) {
       this.overlayEl.replaceChildren();
       this.cells = newChars.map((ch, i) => this.mountCell(ch, frames[i], reduced));
       this.chars = newChars;
@@ -436,8 +453,17 @@ export class RollingNumberEngine {
     if (rolling) {
       strip = document.createElement('span');
       strip.className = 'rn-strip';
-      strip.textContent = STRIP_ROWS;
       strip.style.lineHeight = `${this.rowHeight}px`;
+      // Rows are placed with transforms, not stacked by line-height: layout rounds lengths
+      // to 1/64px, which would break the whole-device-pixel pitch (see rowPitchPx).
+      for (const [i, digit] of STRIP_DIGITS.entries()) {
+        const row = document.createElement('span');
+        row.className = 'rn-row';
+        row.textContent = digit;
+        row.style.transform = `translateY(${i * this.rowHeight}px)`;
+        this.copyAngularScopeAttrs(row);
+        strip.appendChild(row);
+      }
       strip.style.transform = `translateY(${digitOffset(ch, this.rowHeight)}px)`;
       this.copyAngularScopeAttrs(strip);
       el.appendChild(strip);
@@ -536,6 +562,7 @@ export class RollingNumberEngine {
 }
 
 export const __testing = {
+  rowPitchPx,
   graphemes,
   isDigit,
   isSeparator,
