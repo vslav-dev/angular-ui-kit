@@ -109,7 +109,7 @@ export class VAccordion implements OnInit, OnDestroy {
       this.accordionGroupService.toggle(groupId, this.accordionId, index);
       const newState = this.accordionGroupService.isOpen(groupId, this.accordionId, index);
       this.previousStates.set(index, newState);
-      item.notifyStateChange(newState);
+      item?.notifyStateChange(newState);
     } else {
       const opened = new Set(this.openedIndices$$());
 
@@ -129,7 +129,7 @@ export class VAccordion implements OnInit, OnDestroy {
       }
 
       this.openedIndices$$.set(opened);
-      item.notifyStateChange(opened.has(index));
+      item?.notifyStateChange(opened.has(index));
     }
   }
 }

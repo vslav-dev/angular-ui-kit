@@ -20,7 +20,7 @@ interface LayerEntry {
   id: string;
   zIndex: number;
   type: LayerType;
-  parentId?: string;
+  parentId?: string | undefined;
 }
 
 /**

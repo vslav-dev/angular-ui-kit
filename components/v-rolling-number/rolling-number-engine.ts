@@ -85,6 +85,13 @@ function graphemes(text: string): string[] {
   return Array.from(text);
 }
 
+// Reads an element whose index is valid by construction (parallel arrays, DP tables): a bad index is a bug here, not data.
+function at<T>(items: readonly T[], index: number): T {
+  const item = items[index];
+  if (item === undefined) throw new Error(`Index ${index} is out of range (length ${items.length})`);
+  return item;
+}
+
 function isDigit(ch: string): boolean {
   return ch.length === 1 && ch >= '0' && ch <= '9';
 }
@@ -120,7 +127,7 @@ function measureFrames(hostEl: HTMLElement, textEl: HTMLElement, chars: readonly
   const right = range.getBoundingClientRect().right - hostBox.left;
 
   return starts.map((x, i) => {
-    const next = i + 1 < starts.length ? starts[i + 1] : right;
+    const next = starts[i + 1] ?? right;
     return { x, width: Math.max(next - x, 0) };
   });
 }
@@ -153,6 +160,7 @@ function parseNumberShape(chars: readonly string[]): NumberShape | null {
   let i = first;
   for (; i < chars.length; i++) {
     const ch = chars[i];
+    if (ch === undefined) break;
     if (isDigit(ch)) {
       (decimalAt === null ? whole : frac).push(i);
     } else if (ch === '.' && decimalAt === null) {
@@ -178,24 +186,24 @@ function lcsMatch(
 ): void {
   const n = oldIdx.length;
   const m = newIdx.length;
-  const dp: Uint16Array[] = [];
-  for (let i = 0; i <= n; i++) dp.push(new Uint16Array(m + 1));
+  const sameChar = (i: number, j: number): boolean => oldChars[at(oldIdx, i - 1)] === newChars[at(newIdx, j - 1)];
+  const dp: Uint16Array[] = [new Uint16Array(m + 1)];
+  const lcs = (i: number, j: number): number => dp[i]?.[j] ?? 0;
   for (let i = 1; i <= n; i++) {
+    const row = new Uint16Array(m + 1);
+    dp.push(row);
     for (let j = 1; j <= m; j++) {
-      dp[i][j] =
-        oldChars[oldIdx[i - 1]] === newChars[newIdx[j - 1]]
-          ? dp[i - 1][j - 1] + 1
-          : Math.max(dp[i - 1][j], dp[i][j - 1]);
+      row[j] = sameChar(i, j) ? lcs(i - 1, j - 1) + 1 : Math.max(lcs(i - 1, j), lcs(i, j - 1));
     }
   }
   let i = n;
   let j = m;
   while (i > 0 && j > 0) {
-    if (oldChars[oldIdx[i - 1]] === newChars[newIdx[j - 1]]) {
-      out.set(newIdx[j - 1], oldIdx[i - 1]);
+    if (sameChar(i, j)) {
+      out.set(at(newIdx, j - 1), at(oldIdx, i - 1));
       i--;
       j--;
-    } else if (dp[i - 1][j] >= dp[i][j - 1]) {
+    } else if (lcs(i - 1, j) >= lcs(i, j - 1)) {
       i--;
     } else {
       j--;
@@ -208,12 +216,12 @@ function lcsMatch(
 // value's cell the same logical cell across a value change instead of sliding.
 function matchFromEnd(oldIdx: readonly number[], newIdx: readonly number[], out: Map<number, number>): void {
   const n = Math.min(oldIdx.length, newIdx.length);
-  for (let k = 0; k < n; k++) out.set(newIdx[newIdx.length - 1 - k], oldIdx[oldIdx.length - 1 - k]);
+  for (let k = 0; k < n; k++) out.set(at(newIdx, newIdx.length - 1 - k), at(oldIdx, oldIdx.length - 1 - k));
 }
 
 function matchFromStart(oldIdx: readonly number[], newIdx: readonly number[], out: Map<number, number>): void {
   const n = Math.min(oldIdx.length, newIdx.length);
-  for (let k = 0; k < n; k++) out.set(newIdx[k], oldIdx[k]);
+  for (let k = 0; k < n; k++) out.set(at(newIdx, k), at(oldIdx, k));
 }
 
 // Maps each index in newChars to the index in oldChars it should be treated as "the same
@@ -380,8 +388,8 @@ function schedulePendingCommit(engine: RollingNumberEngine): void {
 function flushPendingCommits(): void {
   const engines = [...pendingCommits];
   pendingCommits.clear();
-  const measurements = engines.map((engine) => engine.measurePending());
-  engines.forEach((engine, i) => engine.applyPending(measurements[i]));
+  const measured = engines.map((engine) => ({ engine, measurement: engine.measurePending() }));
+  for (const { engine, measurement } of measured) engine.applyPending(measurement);
 }
 
 export interface RollingNumberOptions {
@@ -446,7 +454,7 @@ export class RollingNumberEngine {
 
     if (snap || pitchChanged || this.chars.length === 0) {
       this.overlayEl.replaceChildren();
-      this.cells = newChars.map((ch, i) => this.mountCell(ch, frames[i]));
+      this.cells = newChars.map((ch, i) => this.mountCell(ch, at(frames, i)));
       this.chars = newChars;
       return;
     }
@@ -456,25 +464,25 @@ export class RollingNumberEngine {
     const nextCells = new Array<Cell>(newChars.length);
     let enterCount = 0;
 
-    for (let ni = 0; ni < newChars.length; ni++) {
+    for (const [ni, newChar] of newChars.entries()) {
       const oi = map.get(ni);
       if (oi === undefined) continue;
-      const cell = this.cells[oi];
-      const newChar = newChars[ni];
+      const cell = at(this.cells, oi);
+      const frame = at(frames, ni);
       const isRollingDigit = this.mode === 'rolling' && cell.strip !== null && isDigit(newChar);
       if (newChar !== cell.char && !isRollingDigit) {
         this.exitCell(cell, reduced);
-        nextCells[ni] = this.enterCell(newChar, frames[ni], enterCount++, reduced);
+        nextCells[ni] = this.enterCell(newChar, frame, enterCount++, reduced);
       } else {
-        this.moveCell(cell, newChar, frames[ni], reduced);
+        this.moveCell(cell, newChar, frame, reduced);
         nextCells[ni] = cell;
       }
     }
-    for (let oi = 0; oi < this.chars.length; oi++) {
-      if (!usedOld.has(oi)) this.exitCell(this.cells[oi], reduced);
+    for (const [oi, cell] of this.cells.entries()) {
+      if (!usedOld.has(oi)) this.exitCell(cell, reduced);
     }
-    for (let ni = 0; ni < newChars.length; ni++) {
-      if (!map.has(ni)) nextCells[ni] = this.enterCell(newChars[ni], frames[ni], enterCount++, reduced);
+    for (const [ni, newChar] of newChars.entries()) {
+      if (!map.has(ni)) nextCells[ni] = this.enterCell(newChar, at(frames, ni), enterCount++, reduced);
     }
 
     this.chars = newChars;

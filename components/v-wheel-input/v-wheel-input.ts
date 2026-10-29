@@ -37,11 +37,12 @@ export class VWheelInput {
 
     for (const segment of this.segments()) {
       const items = itemsBySegment.get(segment.id);
-      if (!items?.length) continue;
+      const lastItem = items?.at(-1);
+      if (!items || !lastItem) continue;
       if (!corrected[segment.id]) continue;
       if (items.some((item) => item.value === corrected[segment.id])) continue;
 
-      corrected[segment.id] = items[items.length - 1].value;
+      corrected[segment.id] = lastItem.value;
       hasChanges = true;
     }
 

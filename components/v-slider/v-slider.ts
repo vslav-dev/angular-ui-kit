@@ -84,17 +84,9 @@ export class VSlider {
     return [...filtered].sort((a, b) => a - b);
   });
 
-  protected readonly min$$ = computed(() => {
-    const list = this.valueListSorted$$();
-    if (list.length > 0) return list[0];
-    return Math.min(this.min(), this.max());
-  });
+  protected readonly min$$ = computed(() => this.valueListSorted$$()[0] ?? Math.min(this.min(), this.max()));
 
-  protected readonly max$$ = computed(() => {
-    const list = this.valueListSorted$$();
-    if (list.length > 0) return list[list.length - 1];
-    return Math.max(this.min(), this.max());
-  });
+  protected readonly max$$ = computed(() => this.valueListSorted$$().at(-1) ?? Math.max(this.min(), this.max()));
 
   protected readonly heightString$$ = computed(() => resolveCssUnitOrRawValue(this.height()));
   protected readonly borderRadiusString$$ = computed(() => resolveCssUnitOrRawValue(this.borderRadius()));
@@ -438,25 +430,16 @@ export class VSlider {
 
   private snapToList(value: number): number {
     const list = this.valueListSorted$$();
-    if (list.length === 0) return value;
-    if (value <= list[0]) return list[0];
-    if (value >= list[list.length - 1]) return list[list.length - 1];
+    const first = list[0];
+    const last = list.at(-1);
+    if (first === undefined || last === undefined) return value;
+    if (value <= first) return first;
+    if (value >= last) return last;
 
-    let low = 0;
-    let high = list.length - 1;
-    while (high - low > 1) {
-      const mid = Math.floor((low + high) / 2);
-      const midValue = list[mid];
-      if (value === midValue) return midValue;
-      if (value < midValue) {
-        high = mid;
-      } else {
-        low = mid;
-      }
-    }
-
-    const lowValue = list[low];
-    const highValue = list[high];
+    // The nearest list values below and above (the list is small and sorted); a tie goes to the lower one.
+    const lowValue = list.filter((item) => item <= value).at(-1);
+    const highValue = list.find((item) => item >= value);
+    if (lowValue === undefined || highValue === undefined) return value;
     return Math.abs(value - lowValue) <= Math.abs(highValue - value) ? lowValue : highValue;
   }
 
@@ -522,10 +505,9 @@ export class VSlider {
 
   private stepValue(current: number, dir: 1 | -1): number {
     const list = this.valueListSorted$$();
-    if (list.length > 0) {
-      const idx = list.indexOf(current);
-      return list[Math.max(0, Math.min(list.length - 1, idx + dir))];
-    }
+    const idx = list.indexOf(current);
+    const next = list[Math.max(0, Math.min(list.length - 1, idx + dir))];
+    if (next !== undefined) return next;
     return this.clampToBounds(current + dir, this.min$$(), this.max$$());
   }
 
