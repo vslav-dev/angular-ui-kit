@@ -27,7 +27,7 @@ export type ButtonSurface = (typeof ButtonSurface)[keyof typeof ButtonSurface];
   selector: 'v-button',
   templateUrl: './v-button.html',
   styleUrl: './v-button.css',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[style.width]': 'width() || null',
     '[style.--v-button-border-radius]': 'borderRadiusString$$()',

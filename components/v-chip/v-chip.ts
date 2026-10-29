@@ -6,7 +6,7 @@ import { IconName, VIcon } from '@ui-kit/components/v-icon/v-icon';
   templateUrl: './v-chip.html',
   styleUrl: './v-chip.css',
   imports: [VIcon],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class.disabled]': 'isDisabled()',
   },

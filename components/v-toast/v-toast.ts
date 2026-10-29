@@ -12,7 +12,7 @@ export type VToastType = 'success' | 'error' | 'warning' | 'info';
     '[attr.data-type]': 'type()',
     '(click)': 'close()',
   },
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [VButton, VIcon],
 })
 export class VToast {

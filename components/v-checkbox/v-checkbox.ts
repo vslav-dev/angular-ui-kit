@@ -21,7 +21,7 @@ export type VCheckboxLabelPosition = (typeof VCheckboxLabelPosition)[keyof typeo
   templateUrl: './v-checkbox.html',
   styleUrl: './v-checkbox.css',
   imports: [VIcon],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class.checked]': 'value()',
     '[class.disabled]': 'isDisabled()',

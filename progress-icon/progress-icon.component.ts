@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, input
 @Component({
   selector: 'ui-progress-icon',
   templateUrl: './progress-icon.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './progress-icon.component.scss',
 })
 export class UiProgressIcon {

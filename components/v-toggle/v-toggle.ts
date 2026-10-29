@@ -14,7 +14,7 @@ export interface VToggleItem {
   templateUrl: './v-toggle.html',
   styleUrl: './v-toggle.css',
   imports: [VCard, VButton],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[style.--v-toggle-gap]': 'gapString$$()',
     '[class.v-toggle-fit-host]': 'fitContent()',

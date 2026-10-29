@@ -5,7 +5,7 @@ import { CssUnitOrRawValue, resolveCssUnitOrRawValue } from '@ui-kit/types';
   selector: 'v-progress',
   templateUrl: './v-progress.html',
   styleUrl: './v-progress.css',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[style.--v-progress-height]': 'heightString$$()',
     '[style.--v-progress-border-radius]': 'borderRadiusString$$()',

@@ -120,7 +120,7 @@ export type IconName = (typeof IconName)[keyof typeof IconName];
   selector: 'v-icon',
   templateUrl: './v-icon.html',
   styleUrl: './v-icon.css',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[style.--v-icon-size]': 'iconUnitSizeString$$()',
     '[style.--v-icon-background]': 'iconBackgroundString$$()',

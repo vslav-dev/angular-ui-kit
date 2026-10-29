@@ -16,7 +16,7 @@ import { computeTooltipPosition } from './tooltip-position';
   selector: 'v-tooltip',
   templateUrl: './v-tooltip.html',
   styleUrl: './v-tooltip.css',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[style.--v-tooltip-z-index]': 'zIndex$$()',
     '[class.fill]': 'fill()',
