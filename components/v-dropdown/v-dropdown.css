@@ -9,6 +9,7 @@
   width: 100%;
   background: var(--v-color-surface);
   border-radius: var(--unit-2);
+  anchor-name: var(--v-dropdown-anchor);
 
   &.open {
     z-index: var(--v-dropdown-z-index);
@@ -52,6 +53,10 @@
 
 .dropdown-list {
   position: fixed;
+  position-anchor: var(--v-dropdown-anchor);
+  top: anchor(bottom);
+  right: anchor(right);
+  width: anchor-size(width);
   z-index: calc(var(--v-dropdown-z-index) + 1);
   border-radius: var(--unit-2);
   max-height: 200px;
@@ -59,6 +64,11 @@
   background: var(--v-color-surface);
   outline: var(--v-outline);
   outline-offset: var(--v-outline-offset);
+}
+
+:host([expand-direction='right']) .dropdown-list {
+  right: auto;
+  left: anchor(left);
 }
 
 .dropdown-item {

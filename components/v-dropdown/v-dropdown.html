@@ -1,7 +1,6 @@
 <div class="dropdown-wrapper"
      [class.select-mode]="isSelectMode$$()"
-     [class.open]="isOpen$$()"
-     [formGroup]="internalForm">
+     [class.open]="isOpen$$()">
 
   <v-input #inputComponent
            [label]="label()"
@@ -13,7 +12,8 @@
            [inputSize]="isSelectMode$$() ? getSelectInputSize() : null"
            [inputmode]="isSelectMode$$() ? 'none' : 'text'"
            [errorMessage]="computedErrorMessage$$()"
-           formControlName="search"
+           [value]="displayText$$()"
+           (valueChange)="onSearchInput($event)"
            (onFocused)="onFocus()"
            (onBlurred)="onBlur()">
     @if (isSelectMode$$()) {
@@ -27,7 +27,7 @@
       }
     }
 
-    @if (value$$() && !isSelectMode$$()) {
+    @if (displayText$$() && !isSelectMode$$()) {
       <div v-postfix
            class="clear-icon"
            (mousedown)="$event.preventDefault()"
@@ -48,7 +48,7 @@
 
   @if (isOpen$$() && filteredItems$$().length > 0) {
     <div class="dropdown-list"
-         [style]="dropdownListStyles$$()">
+         [style.min-width]="minDropdownWidth() || null">
       @for (item of filteredItems$$(); track item.value) {
         <div class="dropdown-item"
              [class.selected]="item.value === selectedValue$$()"
@@ -74,9 +74,9 @@
     </div>
   }
 
-  @if (isOpen$$() && filteredItems$$().length === 0 && value$$()) {
+  @if (isOpen$$() && filteredItems$$().length === 0 && displayText$$()) {
     <div class="dropdown-list"
-         [style]="dropdownListStyles$$()">
+         [style.min-width]="minDropdownWidth() || null">
       <div class="dropdown-item empty">
         No items found
       </div>

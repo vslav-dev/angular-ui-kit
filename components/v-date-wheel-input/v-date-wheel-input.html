@@ -1,7 +1,7 @@
 <v-wheel-input [segments]="segments$$()"
                [isDisabled]="isDisabled()"
-               [ngModel]="segmentValues$$()"
-               (ngModelChange)="onSegmentValuesChange($event)">
+               [values]="segmentValues$$()"
+               (valuesChange)="onSegmentValuesChange($event)">
   <ng-container v-prefix>
     <ng-content select="[v-prefix]" />
   </ng-container>

@@ -1,6 +1,6 @@
 # V-Dropdown
 
-Searchable dropdown with automatic filtering and form integration. Uses flat design and supports dark theme.
+Searchable dropdown with automatic filtering. Two-way `value` model, no form directives. Uses flat design and supports dark theme.
 
 ## Basic Usage
 
@@ -16,7 +16,7 @@ Searchable dropdown with automatic filtering and form integration. Uses flat des
 
 ```typescript
 interface DropdownItem {
-  value: string;  // form value
+  value: string;  // model value
   label: string;  // display text
 }
 ```
@@ -24,6 +24,7 @@ interface DropdownItem {
 ## Properties
 
 ```ts
+value: string | null = ''  // model: the chosen item's value; in search mode, the typed text while nothing is chosen
 mode: 'search' | 'select' = 'search'
 label: string = ''
 labelRight: string = ''
@@ -43,11 +44,11 @@ expandDirection: 'left' | 'right' = 'left'
 ## Examples
 
 ```html
-<!-- With forms -->
+<!-- With a signal -->
 <v-dropdown
   label="Food Type"
   placeholder="Search food..."
-  formControlName="food"
+  [(value)]="foodId"
   [items]="items"
   (onSelectionChanged)="onSelect($event)"
 />
@@ -78,6 +79,6 @@ expandDirection: 'left' | 'right' = 'left'
   label="Category"
   [items]="categories"
   [minDropdownWidth]="'250px'"
-  formControlName="category"
+  [(value)]="categoryId"
 />
 ```

@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, forwardRef, input, signal } from '@angular/core';
-import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, computed, input, model } from '@angular/core';
 import { VWheelInput, WheelInputSegment } from '@ui-kit/components/v-wheel-input/v-wheel-input';
 import { WheelSelectItem } from '@ui-kit/components/v-wheel-select/v-wheel-select';
 
@@ -30,22 +29,17 @@ function partsToIso(values: Record<string, string>): string {
 @Component({
   selector: 'v-date-wheel-input',
   templateUrl: './v-date-wheel-input.html',
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => VDateWheelInput),
-      multi: true,
-    },
-  ],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [FormsModule, VWheelInput],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [VWheelInput],
 })
-export class VDateWheelInput implements ControlValueAccessor {
+export class VDateWheelInput {
   public readonly isDisabled = input<boolean>(false);
   public readonly yearRange = input<number>(100);
 
-  protected readonly dateISO$$ = signal('');
-  protected readonly segmentValues$$ = computed(() => isoToParts(this.dateISO$$()));
+  // ISO date (YYYY-MM-DD); empty shows today's parts without changing the value until the user picks something.
+  public readonly value = model<string>('');
+
+  protected readonly segmentValues$$ = computed(() => isoToParts(this.value()));
 
   protected readonly segments$$ = computed<WheelInputSegment[]>(() => {
     const range = this.yearRange();
@@ -84,27 +78,7 @@ export class VDateWheelInput implements ControlValueAccessor {
     ];
   });
 
-  private onChange = (value: string) => {};
-  private onTouched = () => {};
-
-  public writeValue(value: string | null): void {
-    this.dateISO$$.set(value || '');
-  }
-
-  public registerOnChange(fn: (value: string) => void): void {
-    this.onChange = fn;
-  }
-
-  public registerOnTouched(fn: () => void): void {
-    this.onTouched = fn;
-  }
-
-  public setDisabledState(): void {}
-
   protected onSegmentValuesChange(values: Record<string, string>): void {
-    const iso = partsToIso(values);
-    this.dateISO$$.set(iso);
-    this.onChange(iso);
-    this.onTouched();
+    this.value.set(partsToIso(values));
   }
 }
