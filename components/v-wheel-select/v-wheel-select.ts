@@ -29,7 +29,7 @@ function clamp(value: number, min: number, max: number): number {
   selector: 'v-wheel-select',
   templateUrl: './v-wheel-select.html',
   styleUrl: './v-wheel-select.css',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[style.--v-wheel-select-z-index]': 'zIndex$$()',
     '(document:pointerdown)': 'onDocumentPointerDown($event)',

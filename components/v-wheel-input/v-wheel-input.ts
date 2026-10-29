@@ -28,7 +28,7 @@ export interface WheelInputSegment {
       multi: true,
     },
   ],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [VWheelSelect],
 })
 export class VWheelInput implements ControlValueAccessor {

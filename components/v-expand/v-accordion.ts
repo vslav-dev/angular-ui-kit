@@ -23,7 +23,7 @@ export interface AccordionItemPosition {
 @Component({
   selector: 'v-accordion',
   template: '<ng-content />',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'v-accordion-group',
     style: 'display: block;',

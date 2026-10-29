@@ -8,7 +8,7 @@ import { AccordionItemPosition } from './v-accordion';
   templateUrl: './v-expand.html',
   styleUrl: './v-expand.css',
   imports: [VIcon],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[style.--v-expand-padding]': 'paddingString$$()',
     '[style.--v-expand-border-radius]': 'borderRadiusString$$()',

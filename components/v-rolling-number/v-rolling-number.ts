@@ -26,7 +26,7 @@ import { DEFAULT_ROLLING_NUMBER_SPEED_MS, RollingNumberEngine, RollingNumberMode
 @Component({
   selector: 'v-rolling-number',
   templateUrl: './v-rolling-number.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './v-rolling-number.css',
 })
 export class VRollingNumber {

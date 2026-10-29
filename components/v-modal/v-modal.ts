@@ -6,6 +6,7 @@ import {
   inject,
   input,
   output,
+  signal,
 } from '@angular/core';
 import { VButton } from '@ui-kit/components/v-button/v-button';
 import { VBackdropDirective } from '@ui-kit/directives/backdrop.directive';
@@ -26,7 +27,7 @@ export type ModalDeviceType = (typeof ModalDeviceType)[keyof typeof ModalDeviceT
   host: {
     '[style.--v-modal-width]': 'width$$()',
     '[style.--v-modal-border-radius]': 'borderRadiusString$$()',
-    '[style.--v-modal-z-index]': 'zIndex',
+    '[style.--v-modal-z-index]': 'zIndex$$()',
     '[style.--v-modal-padding-x]': 'paddingXString$$()',
     '[style.--v-modal-padding-y]': 'paddingYString$$()',
     '(document:keydown.escape)': 'onEscapeKey()',
@@ -38,7 +39,7 @@ export type ModalDeviceType = (typeof ModalDeviceType)[keyof typeof ModalDeviceT
       deps: [VModal],
     },
   ],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [VButton, VBackdropDirective],
 })
 export class VModal {
@@ -66,7 +67,7 @@ export class VModal {
   protected readonly paddingYString$$ = computed(() => resolveCssUnitOrRawValue(this.paddingY$$()));
   protected readonly borderRadiusString$$ = computed(() => resolveCssUnitOrRawValue(this.borderRadius()));
 
-  protected zIndex = 100;
+  protected readonly zIndex$$ = signal(100);
   private layerController?: LayerController;
   private readonly zLayerService = inject(ZLayerService);
 
@@ -98,7 +99,7 @@ export class VModal {
 
   private registerLayer(): void {
     this.layerController = this.zLayerService.registerLayer('modal');
-    this.zIndex = this.layerController.zIndex;
+    this.zIndex$$.set(this.layerController.zIndex);
   }
 
   private getFinalWidth(): string {
