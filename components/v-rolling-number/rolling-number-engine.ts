@@ -359,6 +359,31 @@ function digitOffset(digit: string, rowHeight: number): number {
   return -(9 - Number(digit)) * rowHeight;
 }
 
+interface Measurement {
+  readonly newChars: string[];
+  readonly rowHeight: number;
+  readonly frames: GlyphFrame[];
+}
+
+// A commit writes DOM and then needs layout to measure it. Done per instance, N instances
+// updating in one tick means N write→read pairs, each forcing a synchronous reflow. Instead
+// every commit of the tick is queued, then one flush does all the reads before any of the
+// writes — the first read pays for the layout, the rest hit a clean one. The microtask runs
+// right after the tick's callback, before the browser renders, so nothing paints in between.
+const pendingCommits = new Set<RollingNumberEngine>();
+
+function schedulePendingCommit(engine: RollingNumberEngine): void {
+  if (pendingCommits.size === 0) queueMicrotask(flushPendingCommits);
+  pendingCommits.add(engine);
+}
+
+function flushPendingCommits(): void {
+  const engines = [...pendingCommits];
+  pendingCommits.clear();
+  const measurements = engines.map((engine) => engine.measurePending());
+  engines.forEach((engine, i) => engine.applyPending(measurements[i]));
+}
+
 export interface RollingNumberOptions {
   readonly mode?: RollingNumberMode;
   readonly speedMs?: number;
@@ -371,6 +396,8 @@ export class RollingNumberEngine {
   private chars: string[] = [];
   private cells: Cell[] = [];
   private rowHeight = 0;
+  private pendingText = '';
+  private pendingSnap = false;
 
   public constructor(
     private readonly hostEl: HTMLElement,
@@ -385,15 +412,36 @@ export class RollingNumberEngine {
   // Diffs `text` against whatever was last committed and animates the difference. Pass
   // `snap: true` to mount instantly with no animation (initial render, or a structural
   // reconfiguration where animating the transition wouldn't mean anything).
+  //
+  // Only the static text is written here; measuring and animating happen in the shared
+  // microtask flush (see flushPendingCommits), so commits from many instances in one tick
+  // cost one layout instead of one each. Commits to the same instance within a tick
+  // coalesce — only the latest text is animated to.
   public commit(text: string, snap = false): void {
     this.staticTextEl.textContent = text;
-    const newChars = graphemes(text);
+    this.pendingText = text;
+    this.pendingSnap ||= snap;
+    schedulePendingCommit(this);
+  }
+
+  // Reads only (layout geometry of the already-written static text) — must never be
+  // interleaved with apply() writes of another instance, see flushPendingCommits.
+  public measurePending(): Measurement {
+    const newChars = graphemes(this.pendingText);
+    return {
+      newChars,
+      rowHeight: rowPitchPx(this.hostEl.getBoundingClientRect().height, window.devicePixelRatio),
+      frames: measureFrames(this.hostEl, this.staticTextEl, newChars),
+    };
+  }
+
+  public applyPending({ newChars, rowHeight, frames }: Measurement): void {
+    const snap = this.pendingSnap;
+    this.pendingSnap = false;
     // Cells bake the pitch into their rows at mount, so a changed pitch (page zoom, font
     // size) invalidates them all — remount instead of mixing pitches.
-    const rowHeight = rowPitchPx(this.hostEl.getBoundingClientRect().height, window.devicePixelRatio);
     const pitchChanged = rowHeight !== this.rowHeight;
     this.rowHeight = rowHeight;
-    const frames = measureFrames(this.hostEl, this.staticTextEl, newChars);
     const reduced = prefersReducedMotion();
 
     if (snap || pitchChanged || this.chars.length === 0) {
@@ -436,6 +484,7 @@ export class RollingNumberEngine {
   // Cancels every in-flight animation this engine owns. The overlay DOM is torn down
   // along with the host element itself, so nothing else needs cleanup here.
   public destroy(): void {
+    pendingCommits.delete(this);
     for (const cell of this.cells) {
       cell.digitAnim?.cancel();
       cell.el.getAnimations().forEach((anim) => anim.cancel());
