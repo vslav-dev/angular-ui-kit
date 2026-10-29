@@ -1,19 +1,21 @@
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
   effect,
   ElementRef,
   inject,
+  Injector,
   input,
   model,
   OnDestroy,
   output,
   signal,
+  untracked,
   viewChild,
-  WritableSignal,
 } from '@angular/core';
-import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { FormValueControl, ValidationError } from '@angular/forms/signals';
 import { getValidationErrorMessage } from '@ui-kit/components/v-input/validators';
 import { CssUnitOrRawValue, resolveCssUnitOrRawValue } from '@ui-kit/types';
 import { VInputAutoSubmitManager, VInputAutoSubmitResult, VInputAutoSubmitState } from './v-input-auto-submit';
@@ -51,7 +53,7 @@ let uniqueId = 0;
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [],
 })
-export class VInput implements ControlValueAccessor, OnDestroy {
+export class VInput implements FormValueControl<string>, OnDestroy {
   public readonly inputElement = viewChild.required<ElementRef<HTMLInputElement | HTMLTextAreaElement>>('inputElement');
 
   public readonly type = input<InputType>('text');
@@ -64,8 +66,10 @@ export class VInput implements ControlValueAccessor, OnDestroy {
   public readonly isReadonly = input<boolean>(false);
   public readonly isClickable = input<boolean>(false);
   public readonly isTextarea = input<boolean>(false);
-  public readonly pattern = input<string>('');
   public readonly errorMessage = input<string>('');
+  // Bound by the formField directive from the field's state.
+  public readonly errors = input<readonly ValidationError.WithOptionalFieldTree[]>([]);
+  public readonly invalid = input<boolean>(false);
   public readonly inputSize = input<number | null>(null);
   public readonly borderRadius = input<CssUnitOrRawValue>(2);
   public readonly paddingX = input<CssUnitOrRawValue>(0);
@@ -87,6 +91,8 @@ export class VInput implements ControlValueAccessor, OnDestroy {
   public readonly onBlurred = output<Event>();
   public readonly onEnterPressed = output<KeyboardEvent>();
   public readonly onAutoSubmit = output<InputValue>();
+  // The formField directive listens to it to mark the field touched.
+  public readonly touch = output<void>();
 
   protected readonly borderRadiusString$$ = computed(() => resolveCssUnitOrRawValue(this.borderRadius()));
   protected readonly paddingXString$$ = computed(() => resolveCssUnitOrRawValue(this.paddingX()));
@@ -94,98 +100,62 @@ export class VInput implements ControlValueAccessor, OnDestroy {
   protected readonly autoSubmitDelayString$$ = computed(() => `${this.autoSubmitDelay()}ms`);
   protected readonly autoSubmitResultFadeDurationString$$ = computed(() => `${this.autoSubmitResultFadeDuration()}ms`);
 
-  protected ngControlValue$$: WritableSignal<string> = signal('');
   protected readonly isFocused$$ = signal(false);
   protected readonly hasInteracted$$ = signal(false);
   protected readonly inputId = `v-input-${++uniqueId}`;
   protected readonly autoSubmitState$$ = signal<VInputAutoSubmitState>(VInputAutoSubmitState.Idle);
 
+  private readonly injector = inject(Injector);
   private isImeComposing = false;
+  // The last value this input has accounted for, typed by the user or taken from the model; a different model value came from outside.
+  private knownValue = '';
 
   private readonly autoSubmitManager = new VInputAutoSubmitManager({
     isEnabled: () => this.isAutoSubmitEnabled() && !this.isDisabled() && !this.isReadonly(),
-    isValid: () => this.isControlValid(),
-    getValue: () => this.displayValue$$(),
+    isValid: () => !this.invalid(),
+    getValue: () => this.value(),
     getAutoSubmitDelay: () => this.autoSubmitDelay(),
     getAutoSubmitResultFadeDuration: () => this.autoSubmitResultFadeDuration(),
     emitSubmit: (value: string) => this.onAutoSubmit.emit(value),
     onStateChange: (state: VInputAutoSubmitState) => this.autoSubmitState$$.set(state),
   });
 
-  protected readonly displayValue$$ = computed(() => {
-    return this.ngControl ? this.ngControlValue$$() : this.value();
+  protected readonly errorMessage$$ = computed(() => {
+    if (!this.hasInteracted$$()) return '';
+    return this.errorMessage() || this.fieldErrorMessage$$();
   });
 
-  protected readonly errorMessage$$ = computed(() => {
-    if (this.ngControl) {
-      this.ngControlValue$$();
-    } else {
-      this.value();
-    }
-    if (!this.hasInteracted$$()) return '';
-    return this.errorMessage() || this.getValidationErrorMessage();
+  private readonly fieldErrorMessage$$ = computed(() => {
+    const error = this.errors()[0];
+    if (!error) return '';
+    return error.message || getValidationErrorMessage(error.kind);
   });
 
   protected readonly vInputAutoSubmitState = VInputAutoSubmitState;
 
-  public readonly ngControl = inject(NgControl, { optional: true, self: true });
-
-  constructor() {
-    if (this.ngControl) {
-      this.ngControl.valueAccessor = this;
-    }
-  }
+  // An outside change (a loaded value, a reset) is not the user's input: no error yet, and autosubmit must not resend it.
+  private readonly syncFromModelEffect = effect(() => {
+    const value = this.value();
+    untracked(() => {
+      if (value === this.knownValue) return;
+      this.knownValue = value;
+      this.hasInteracted$$.set(false);
+      this.autoSubmitManager.writeValue(value);
+    });
+  });
 
   public ngOnDestroy(): void {
     this.autoSubmitManager.destroy();
   }
 
-  private getValidationErrorMessage(): string {
-    if (!this.ngControl) return '';
-
-    const control = this.ngControl.control;
-    if (!control || !control.errors) return '';
-
-    const errorKey = Object.keys(control.errors)[0];
-    const errorValue = control.errors[errorKey];
-
-    return getValidationErrorMessage(errorKey, errorValue);
-  }
-
-  private onChange = (value: InputValue) => {};
-
-  private onTouched = () => {};
-
-  public writeValue(value: InputValue): void {
-    this.ngControlValue$$.set(value != null ? String(value) : '');
-    this.hasInteracted$$.set(false);
-    this.autoSubmitManager.writeValue(value != null ? String(value) : '');
-  }
-
-  public registerOnChange(fn: (value: InputValue) => void): void {
-    this.onChange = fn;
-  }
-
-  public registerOnTouched(fn: () => void): void {
-    this.onTouched = fn;
-  }
-
-  public setDisabledState(isDisabled: boolean): void {}
-
   protected onInputChange(event: Event): void {
     const target = event.target as HTMLInputElement | HTMLTextAreaElement;
-    const newValue = target.value;
     this.hasInteracted$$.set(true);
-
-    if (this.ngControl) {
-      this.ngControlValue$$.set(newValue);
-      this.onChange(newValue);
-    } else {
-      this.value.set(newValue);
-    }
+    this.emitValue(target.value);
 
     this.onInputChanged.emit(event);
-    this.autoSubmitManager.handleChange();
+    // `invalid` is bound from the field and still describes the previous value here; after the next render it describes this one.
+    afterNextRender(() => this.autoSubmitManager.handleChange(), { injector: this.injector });
   }
 
   // Lets a click anywhere in the wrapper (padding, prefix/postfix decoration)
@@ -209,9 +179,7 @@ export class VInput implements ControlValueAccessor, OnDestroy {
 
   protected onBlur(): void {
     this.isFocused$$.set(false);
-    if (this.ngControl) {
-      this.onTouched();
-    }
+    this.touch.emit();
     const event = new Event('blur');
     this.onBlurred.emit(event);
   }
@@ -271,14 +239,6 @@ export class VInput implements ControlValueAccessor, OnDestroy {
     return true;
   }
 
-  private isControlValid(): boolean {
-    if (!this.ngControl) return true;
-    const control = this.ngControl.control;
-    if (!control) return true;
-    if (control.disabled) return false;
-    return control.valid;
-  }
-
   private readonly autoSubmitResultEffect = effect(() => {
     const result = this.autoSubmitResult();
     if (result === null) return;
@@ -304,13 +264,12 @@ export class VInput implements ControlValueAccessor, OnDestroy {
 
   private applyKeyboardValue(newValue: string): void {
     this.hasInteracted$$.set(true);
+    this.emitValue(newValue);
+  }
 
-    if (this.ngControl) {
-      this.ngControlValue$$.set(newValue);
-      this.onChange(newValue);
-    } else {
-      this.value.set(newValue);
-    }
+  private emitValue(value: string): void {
+    this.knownValue = value;
+    this.value.set(value);
   }
 
   public focus(): void {

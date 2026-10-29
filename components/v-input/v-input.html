@@ -22,7 +22,7 @@
   @if (isTextarea()) {
     <textarea #inputElement
               [id]="inputId"
-              [value]="displayValue$$()"
+              [value]="value()"
               [name]="name() || inputId"
               [placeholder]="placeholder()"
               [disabled]="isDisabled()"
@@ -43,7 +43,7 @@
   } @else {
     <input #inputElement
            [id]="inputId"
-           [value]="displayValue$$()"
+           [value]="value()"
            [name]="name() || inputId"
            [type]="type()"
            [placeholder]="placeholder()"
@@ -51,7 +51,6 @@
            [readonly]="isReadonly()"
            [attr.size]="inputSize()"
            [attr.inputmode]="inputmode() || null"
-           [attr.pattern]="pattern() || null"
            [attr.step]="type() === 'number' ? 'any' : null"
            [style.text-align]="textAlign()"
            [style.--v-input-font-weight]="fontWeight()"

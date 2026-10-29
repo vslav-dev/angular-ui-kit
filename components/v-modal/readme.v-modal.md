@@ -62,9 +62,9 @@ paddingY: CssUnitOrRawValue = 2
          (onClose)="hideForm()">
   <h3 v-header>Create Entry</h3>
 
-  <form [formGroup]="myForm">
-    <v-input label="Title" formControlName="title" />
-    <v-input label="Description" formControlName="description" />
+  <form [formRoot]="myForm">
+    <v-input label="Title" [formField]="myForm.title" />
+    <v-input label="Description" [formField]="myForm.description" />
   </form>
 
   <div v-footer class="form-actions">
