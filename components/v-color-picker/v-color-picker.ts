@@ -32,7 +32,7 @@ export class VColorPicker {
   public readonly gap = input<CssUnitOrRawValue>(2);
 
   public readonly value = model<string | null>(null);
-  public readonly onChanged = output<string | null>();
+  public readonly changedOutput = output<string | null>();
 
   protected readonly swatchSizeString$$ = computed(() => resolveCssUnitOrRawValue(this.swatchSize()));
   protected readonly gapString$$ = computed(() => resolveCssUnitOrRawValue(this.gap()));
@@ -40,12 +40,12 @@ export class VColorPicker {
 
   protected selectPreset(color: string): void {
     this.value.set(color);
-    this.onChanged.emit(color);
+    this.changedOutput.emit(color);
   }
 
   protected onCustomColorChange(event: Event): void {
     const target = event.target as HTMLInputElement;
     this.value.set(target.value);
-    this.onChanged.emit(target.value);
+    this.changedOutput.emit(target.value);
   }
 }

@@ -15,12 +15,12 @@ export class VChip {
   public readonly isRemovable = input<boolean>(true);
   public readonly isDisabled = input<boolean>(false);
 
-  public readonly onRemove = output<void>();
+  public readonly removeOutput = output<void>();
 
   protected readonly Icon = IconName;
 
   protected onChipClick(): void {
     if (this.isDisabled() || !this.isRemovable()) return;
-    this.onRemove.emit();
+    this.removeOutput.emit();
   }
 }

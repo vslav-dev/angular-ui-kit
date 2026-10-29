@@ -33,7 +33,7 @@ export class VExpand {
     'ease-in-out',
   );
 
-  public readonly onOpened = output<CustomEvent<boolean>>();
+  public readonly openedOutput = output<CustomEvent<boolean>>();
 
   protected readonly accordionPosition$$ = signal<AccordionItemPosition | null>(null);
 
@@ -61,7 +61,7 @@ export class VExpand {
   private readonly onExpandedChangeEmitEffect$$ = effect(() => {
     if (!this.isInAccordion$$()) {
       const current = this._isExpanded$$();
-      this.onOpened.emit(new CustomEvent('opened', { detail: current }));
+      this.openedOutput.emit(new CustomEvent('opened', { detail: current }));
     }
   });
 
@@ -101,6 +101,6 @@ export class VExpand {
   }
 
   public notifyStateChange(isOpen: boolean): void {
-    this.onOpened.emit(new CustomEvent('opened', { detail: isOpen }));
+    this.openedOutput.emit(new CustomEvent('opened', { detail: isOpen }));
   }
 }

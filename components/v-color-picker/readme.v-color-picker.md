@@ -22,4 +22,4 @@ gap: CssUnitOrRawValue = 2
 ## Events
 
 - `valueChange: string | null`
-- `onChanged: string | null`
+- `changedOutput: string | null`

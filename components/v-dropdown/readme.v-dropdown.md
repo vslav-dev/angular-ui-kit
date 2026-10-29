@@ -39,7 +39,7 @@ expandDirection: 'left' | 'right' = 'left'
 
 ## Events
 
-- `onSelectionChanged: DropdownItem | null`
+- `selectionChangedOutput: DropdownItem | null`
 
 ## Examples
 
@@ -50,7 +50,7 @@ expandDirection: 'left' | 'right' = 'left'
   placeholder="Search food..."
   [(value)]="foodId"
   [items]="items"
-  (onSelectionChanged)="onSelect($event)"
+  (selectionChangedOutput)="onSelect($event)"
 />
 
 <!-- Right-aligned -->

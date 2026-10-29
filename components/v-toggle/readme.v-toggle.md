@@ -48,4 +48,4 @@ inactiveColorClass: string = ''
 ## Events
 
 - `valueChange: string[]`
-- `onChanged: string[]`
+- `changedOutput: string[]`

@@ -14,8 +14,8 @@
            [errorMessage]="computedErrorMessage$$()"
            [value]="displayText$$()"
            (valueChange)="onSearchInput($event)"
-           (onFocused)="onFocus()"
-           (onBlurred)="onBlur()">
+           (focusedOutput)="onFocus()"
+           (blurredOutput)="onBlur()">
     @if (isSelectMode$$()) {
       @if (selectedItemWithIcon$$(); as selectedItem) {
         <div v-prefix

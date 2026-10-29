@@ -14,7 +14,7 @@ export class UiProgressIcon {
   public readonly color = input('var(--v-color-text)');
   public readonly backgroundColor = input('var(--v-color-border-subtle)');
 
-  private readonly elementRef = inject(ElementRef);
+  private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
 
   protected readonly isCircle$$ = computed(() => {
     const element = this.elementRef.nativeElement;

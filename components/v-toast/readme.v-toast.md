@@ -7,7 +7,7 @@ Presentational notification card: icon, message, tap-anywhere-to-dismiss. No int
 ```html
 <v-toast [type]="'success'"
          [message]="'Запись добавлена'"
-         (onClose)="dismiss()" />
+         (closeOutput)="dismiss()" />
 ```
 
 ## API
@@ -22,7 +22,7 @@ isCloseButtonVisible: input<boolean>(false)
 onClose: output<void>()
 ```
 
-The whole card is clickable and emits `onClose` — that's the default dismiss interaction, no close button shown. `isCloseButtonVisible` keeps the dedicated × button available as an opt-in for flows that need it; current flows don't enable it.
+The whole card is clickable and emits `closeOutput` — that's the default dismiss interaction, no close button shown. `isCloseButtonVisible` keeps the dedicated × button available as an opt-in for flows that need it; current flows don't enable it.
 
 `isPending` swaps the type icon for a spinning sync icon — used for the persistent "saving..." state while a background sync is in flight. Background/border/icon color is driven by `type` (tinted with `color-mix`): `success` → `--v-color-success`, `error` → `--v-color-danger`, `warning`/pending → `--v-color-warning`, `info` → `--v-color-primary`.
 

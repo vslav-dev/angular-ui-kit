@@ -53,11 +53,11 @@ autoSubmitResultFadeDuration: number = 3000
 
 ## Events
 
-- `onInputChanged: Event`
-- `onFocused: Event`
-- `onBlurred: Event`
-- `onEnterPressed: KeyboardEvent`
-- `onAutoSubmit: string | number | null`
+- `inputChangedOutput: Event`
+- `focusedOutput: Event`
+- `blurredOutput: Event`
+- `enterPressedOutput: KeyboardEvent`
+- `autoSubmitOutput: string | number | null`
 - `touch: void` (blur; marks the Signal Forms field touched)
 
 ## Examples
@@ -105,5 +105,5 @@ autoSubmitResultFadeDuration: number = 3000
   [isAutoSubmitEnabled]="true"
   [autoSubmitDelay]="1500"
   [autoSubmitResult]="autoSubmitResult"
-  (onAutoSubmit)="handleAutoSubmit($event)" />
+  (autoSubmitOutput)="handleAutoSubmit($event)" />
 ```

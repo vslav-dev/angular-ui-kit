@@ -34,7 +34,7 @@ export class VToggle {
   public readonly inactiveColorClass = input<string>('');
 
   public readonly value = model<string[]>([]);
-  public readonly onChanged = output<string[]>();
+  public readonly changedOutput = output<string[]>();
 
   protected readonly gapString$$ = computed(() => resolveCssUnitOrRawValue(this.gap()));
 
@@ -52,7 +52,7 @@ export class VToggle {
     }
 
     this.value.set(nextValue);
-    this.onChanged.emit(nextValue);
+    this.changedOutput.emit(nextValue);
   }
 
   protected isItemActive(item: VToggleItem): boolean {

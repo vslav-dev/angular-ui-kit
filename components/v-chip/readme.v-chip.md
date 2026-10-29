@@ -5,7 +5,7 @@ Removable pill/tag. The whole chip is the click target — there is no separate 
 ## Basic Usage
 
 ```html
-<v-chip (onRemove)="removeItem(item.id)">{{ item.label }}</v-chip>
+<v-chip (removeOutput)="removeItem(item.id)">{{ item.label }}</v-chip>
 ```
 
 ## Non-Removable (plain tag)
@@ -23,4 +23,4 @@ isDisabled: boolean = false
 
 ## Events
 
-- `onRemove: void` — emitted on click anywhere on the chip, unless `isDisabled` or `isRemovable` is `false`.
+- `removeOutput: void` — emitted on click anywhere on the chip, unless `isDisabled` or `isRemovable` is `false`.

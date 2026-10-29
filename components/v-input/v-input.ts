@@ -86,11 +86,11 @@ export class VInput implements FormValueControl<string>, OnDestroy {
 
   public readonly value = model<string>('');
 
-  public readonly onInputChanged = output<Event>();
-  public readonly onFocused = output<Event>();
-  public readonly onBlurred = output<Event>();
-  public readonly onEnterPressed = output<KeyboardEvent>();
-  public readonly onAutoSubmit = output<InputValue>();
+  public readonly inputChangedOutput = output<Event>();
+  public readonly focusedOutput = output<Event>();
+  public readonly blurredOutput = output<Event>();
+  public readonly enterPressedOutput = output<KeyboardEvent>();
+  public readonly autoSubmitOutput = output<InputValue>();
   // The formField directive listens to it to mark the field touched.
   public readonly touch = output<void>();
 
@@ -116,7 +116,7 @@ export class VInput implements FormValueControl<string>, OnDestroy {
     getValue: () => this.value(),
     getAutoSubmitDelay: () => this.autoSubmitDelay(),
     getAutoSubmitResultFadeDuration: () => this.autoSubmitResultFadeDuration(),
-    emitSubmit: (value: string) => this.onAutoSubmit.emit(value),
+    emitSubmit: (value: string) => this.autoSubmitOutput.emit(value),
     onStateChange: (state: VInputAutoSubmitState) => this.autoSubmitState$$.set(state),
   });
 
@@ -153,7 +153,7 @@ export class VInput implements FormValueControl<string>, OnDestroy {
     this.hasInteracted$$.set(true);
     this.emitValue(target.value);
 
-    this.onInputChanged.emit(event);
+    this.inputChangedOutput.emit(event);
     // `invalid` is bound from the field and still describes the previous value here; after the next render it describes this one.
     afterNextRender(() => this.autoSubmitManager.handleChange(), { injector: this.injector });
   }
@@ -174,21 +174,21 @@ export class VInput implements FormValueControl<string>, OnDestroy {
   protected onFocus(): void {
     this.isFocused$$.set(true);
     const event = new Event('focus');
-    this.onFocused.emit(event);
+    this.focusedOutput.emit(event);
   }
 
   protected onBlur(): void {
     this.isFocused$$.set(false);
     this.touch.emit();
     const event = new Event('blur');
-    this.onBlurred.emit(event);
+    this.blurredOutput.emit(event);
   }
 
   protected onKeydown(event: KeyboardEvent): void {
     if (this.isTextarea()) {
       if (event.key === 'Enter' && (event.metaKey || event.ctrlKey) && !event.isComposing && !this.isImeComposing) {
         event.preventDefault();
-        this.onEnterPressed.emit(event);
+        this.enterPressedOutput.emit(event);
       }
       return;
     }
@@ -203,7 +203,7 @@ export class VInput implements FormValueControl<string>, OnDestroy {
       if (this.isAutoSubmitEnabled()) {
         this.autoSubmitManager.triggerSubmit();
       }
-      this.onEnterPressed.emit(event);
+      this.enterPressedOutput.emit(event);
     }
   }
 
@@ -234,7 +234,7 @@ export class VInput implements FormValueControl<string>, OnDestroy {
     const nextNum = Math.round((parsed.value + delta) * 10) / 10;
     const nextRaw = parsed.usesComma ? String(nextNum).replace('.', ',') : String(nextNum);
     this.applyKeyboardValue(nextRaw);
-    this.onInputChanged.emit(event);
+    this.inputChangedOutput.emit(event);
 
     return true;
   }

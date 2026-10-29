@@ -54,7 +54,7 @@ export class VWheelSelect implements OnInit, OnDestroy {
 
   protected readonly rowHeightPx = ROW_HEIGHT_PX;
 
-  private readonly elementRef = inject(ElementRef<HTMLElement>);
+  private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly zLayerService = inject(ZLayerService);
   private readonly parentLayerId = inject(PARENT_LAYER_ID, { optional: true }) ?? undefined;
   private layerController: LayerController | null = null;
@@ -149,7 +149,7 @@ export class VWheelSelect implements OnInit, OnDestroy {
   }
 
   private getFixedContainingBlockRect(): DOMRect | null {
-    let el = this.elementRef.nativeElement.parentElement as HTMLElement | null;
+    let el = this.elementRef.nativeElement.parentElement;
     while (el && el !== document.documentElement) {
       const style = window.getComputedStyle(el);
       if (style.transform !== 'none' || style.filter !== 'none' || style.perspective !== 'none') {

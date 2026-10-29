@@ -9,7 +9,7 @@
 @if (isCloseButtonVisible()) {
   <v-button class="v-flat close-button"
             [padding]="1"
-            (onClick)="onCloseButtonClick($event)">
+            (clickOutput)="onCloseButtonClick($event)">
     <svg width="10"
          height="10"
          viewBox="0 0 12 12"

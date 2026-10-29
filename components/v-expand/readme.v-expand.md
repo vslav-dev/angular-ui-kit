@@ -109,7 +109,7 @@ multiple: boolean = false  // Allow multiple panels open
 
 ## Events
 
-- `onOpened: CustomEvent<boolean>`
+- `openedOutput: CustomEvent<boolean>`
 
 ## Methods
 

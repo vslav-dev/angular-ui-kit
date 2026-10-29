@@ -72,7 +72,7 @@ export class VDropdown implements OnInit, OnDestroy {
   // The chosen item's value; in search mode, the typed text while nothing is chosen.
   public readonly value = model<string | null>('');
 
-  public readonly onSelectionChanged = output<DropdownItem | null>();
+  public readonly selectionChangedOutput = output<DropdownItem | null>();
 
   protected readonly inputComponent = viewChild.required<VInput>('inputComponent');
   protected readonly isSelectMode$$ = computed(() => this.mode() === DropdownMode.Select);
@@ -178,7 +178,7 @@ export class VDropdown implements OnInit, OnDestroy {
     this.displayText$$.set(item.label);
     this.validationError$$.set('');
     this.emitValue(item.value);
-    this.onSelectionChanged.emit(item);
+    this.selectionChangedOutput.emit(item);
     this.isOpen$$.set(false);
     const inputComp = this.inputComponent();
     if (inputComp) {
@@ -198,7 +198,7 @@ export class VDropdown implements OnInit, OnDestroy {
     this.displayText$$.set('');
     this.validationError$$.set('');
     this.emitValue('');
-    this.onSelectionChanged.emit(null);
+    this.selectionChangedOutput.emit(null);
     this.updateFilteredItems();
   }
 

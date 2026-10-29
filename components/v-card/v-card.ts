@@ -25,7 +25,7 @@ export class VCard {
   public readonly backgroundImageUrl = input<string | null>(null);
   public readonly backgroundImageOpacity = input<number>(1);
 
-  public readonly onCardclick = output<MouseEvent>();
+  public readonly cardClickOutput = output<MouseEvent>();
 
   protected readonly borderRadiusString$$ = computed(() => resolveCssUnitOrRawValue(this.borderRadius()));
   protected readonly paddingX$$ = computed(() => this.paddingX() ?? this.padding() ?? 2);
@@ -41,6 +41,6 @@ export class VCard {
   });
 
   protected onClick(event: MouseEvent): void {
-    this.onCardclick.emit(event);
+    this.cardClickOutput.emit(event);
   }
 }

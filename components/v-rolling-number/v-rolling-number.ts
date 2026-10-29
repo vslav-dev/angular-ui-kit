@@ -39,7 +39,7 @@ export class VRollingNumber {
   private readonly staticTextElem = viewChild.required<ElementRef<HTMLElement>>('staticText');
   private readonly overlayElem = viewChild.required<ElementRef<HTMLElement>>('overlay');
 
-  private readonly hostElem = inject(ElementRef<HTMLElement>);
+  private readonly hostElem = inject<ElementRef<HTMLElement>>(ElementRef);
 
   private engine: RollingNumberEngine | null = null;
 

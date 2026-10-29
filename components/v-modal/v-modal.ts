@@ -5,6 +5,7 @@ import {
   effect,
   inject,
   input,
+  OnDestroy,
   output,
   signal,
 } from '@angular/core';
@@ -42,7 +43,7 @@ export type ModalDeviceType = (typeof ModalDeviceType)[keyof typeof ModalDeviceT
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [VButton, VBackdropDirective],
 })
-export class VModal {
+export class VModal implements OnDestroy {
   public readonly deviceType = input<ModalDeviceType>();
   public readonly isOpen = input<boolean>(false);
   public readonly isCloseButtonVisible = input<boolean>(false);
@@ -56,8 +57,8 @@ export class VModal {
   public readonly paddingX = input<CssUnitOrRawValue>();
   public readonly paddingY = input<CssUnitOrRawValue>();
 
-  public readonly onClose = output<void>();
-  public readonly onOpen = output<void>();
+  public readonly closeOutput = output<void>();
+  public readonly openOutput = output<void>();
 
   protected readonly width$$ = computed(() => this.getFinalWidth());
   protected readonly paddingX$$ = computed(() => this.paddingX() ?? this.padding() ?? 2);
@@ -75,7 +76,7 @@ export class VModal {
     const isOpen = this.isOpen();
     if (isOpen && !this.layerController) {
       this.registerLayer();
-      this.onOpen.emit();
+      this.openOutput.emit();
     }
   });
 
@@ -94,7 +95,7 @@ export class VModal {
   }
 
   protected closeModal(): void {
-    this.onClose.emit();
+    this.closeOutput.emit();
   }
 
   private registerLayer(): void {

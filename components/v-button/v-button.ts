@@ -63,7 +63,7 @@ export class VButton {
   public readonly color = input<string>();
   public readonly tabindex = input<number | string | undefined>(undefined);
 
-  protected readonly onClick = output<MouseEvent>();
+  protected readonly clickOutput = output<MouseEvent>();
 
   protected readonly paddingX$$ = computed(() => this.paddingX() ?? this.padding() ?? 2);
   protected readonly paddingY$$ = computed(() => this.paddingY() ?? this.padding() ?? 2);
@@ -73,7 +73,7 @@ export class VButton {
   protected readonly paddingXString$$ = computed(() => resolveCssUnitOrRawValue(this.paddingX$$()));
   protected readonly gapString$$ = computed(() => resolveCssUnitOrRawValue(this.gap()));
 
-  private readonly elementRef = inject(ElementRef);
+  private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly renderer = inject(Renderer2);
 
   protected onButtonClick(event: MouseEvent): void {
@@ -82,7 +82,7 @@ export class VButton {
       event.stopPropagation();
       return;
     }
-    this.onClick.emit(event);
+    this.clickOutput.emit(event);
   }
 
   protected onPointerDown(event: PointerEvent): void {
@@ -114,12 +114,12 @@ export class VButton {
   }
 
   private isLink(): boolean {
-    const element = this.elementRef.nativeElement as HTMLElement;
+    const element = this.elementRef.nativeElement;
     return element.classList.contains('v-link');
   }
 
   private createRipple(button: HTMLElement, x: number, y: number, size: number): void {
-    const ripple = this.renderer.createElement('span');
+    const ripple = this.renderer.createElement('span') as HTMLElement;
     this.renderer.addClass(ripple, 'v-button-ripple');
     this.renderer.setStyle(ripple, 'width', `${size}px`);
     this.renderer.setStyle(ripple, 'height', `${size}px`);

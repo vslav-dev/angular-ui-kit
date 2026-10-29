@@ -42,4 +42,4 @@ thumbSize: CssUnitOrRawValue = 5
 ## Events
 
 - `valueChange: boolean`
-- `onChanged: boolean`
+- `changedOutput: boolean`

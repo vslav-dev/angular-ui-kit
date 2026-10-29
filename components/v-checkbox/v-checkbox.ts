@@ -51,7 +51,7 @@ export class VCheckbox {
   public readonly thumbSize = input<CssUnitOrRawValue>(5);
 
   public readonly value = model<boolean>(false);
-  public readonly onChanged = output<boolean>();
+  public readonly changedOutput = output<boolean>();
 
   protected readonly Icon = IconName;
 
@@ -75,6 +75,6 @@ export class VCheckbox {
     }
 
     this.value.set(target.checked);
-    this.onChanged.emit(target.checked);
+    this.changedOutput.emit(target.checked);
   }
 }

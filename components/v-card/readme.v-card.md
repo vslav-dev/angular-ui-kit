@@ -41,7 +41,7 @@ Flat design card component with configurable spacing and borders. Supports dark 
 </v-card>
 
 <!-- Clickable card -->
-<v-card (onCardclick)="handleClick($event)">
+<v-card (cardClickOutput)="handleClick($event)">
   Click me!
 </v-card>
 
@@ -68,4 +68,4 @@ backgroundImageOpacity: number = 1
 
 ## Events
 
-- `onCardclick: MouseEvent`
+- `cardClickOutput: MouseEvent`

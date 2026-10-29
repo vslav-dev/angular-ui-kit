@@ -21,7 +21,7 @@ export class VToast {
   public readonly isPending = input<boolean>(false);
   public readonly isCloseButtonVisible = input<boolean>(false);
 
-  protected readonly onClose = output<void>();
+  protected readonly closeOutput = output<void>();
 
   protected readonly icon$$ = computed(() => {
     if (this.isPending()) return IconName.Sync;
@@ -39,7 +39,7 @@ export class VToast {
   });
 
   protected close(): void {
-    this.onClose.emit();
+    this.closeOutput.emit();
   }
 
   protected onCloseButtonClick(event: MouseEvent): void {

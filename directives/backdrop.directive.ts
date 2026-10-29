@@ -17,7 +17,7 @@ export class VBackdropDirective implements OnDestroy {
   private backdropElement: HTMLElement | null = null;
   private clickListener: ((event: Event) => void) | null = null;
 
-  private readonly elementRef = inject(ElementRef);
+  private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly zLayerService = inject(ZLayerService, { optional: true });
   private readonly parentLayerId = inject(PARENT_LAYER_ID, { optional: true });
 

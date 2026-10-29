@@ -446,7 +446,7 @@ export class RollingNumberEngine {
 
     if (snap || pitchChanged || this.chars.length === 0) {
       this.overlayEl.replaceChildren();
-      this.cells = newChars.map((ch, i) => this.mountCell(ch, frames[i], reduced));
+      this.cells = newChars.map((ch, i) => this.mountCell(ch, frames[i]));
       this.chars = newChars;
       return;
     }
@@ -491,7 +491,7 @@ export class RollingNumberEngine {
     }
   }
 
-  private mountCell(ch: string, frame: GlyphFrame, reduced: boolean): Cell {
+  private mountCell(ch: string, frame: GlyphFrame): Cell {
     const el = document.createElement('span');
     el.className = 'rn-cell';
     applyCellBox(el, frame);
@@ -569,7 +569,7 @@ export class RollingNumberEngine {
   }
 
   private enterCell(ch: string, frame: GlyphFrame, staggerIndex: number, reduced: boolean): Cell {
-    const cell = this.mountCell(ch, frame, reduced);
+    const cell = this.mountCell(ch, frame);
     cell.el.style.opacity = reduced ? '1' : '0';
     if (!reduced) {
       cell.el.animate(

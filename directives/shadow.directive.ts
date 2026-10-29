@@ -4,7 +4,7 @@ import { Directive, ElementRef, OnInit, Renderer2, inject, input } from '@angula
   selector: '[outer-shadow]',
 })
 export class OuterShadowDirective implements OnInit {
-  private readonly el = inject(ElementRef);
+  private readonly el = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly renderer = inject(Renderer2);
 
   public ngOnInit() {
@@ -20,7 +20,7 @@ export class OuterShadowDirective implements OnInit {
 export class OuterShadowRoundedDirective implements OnInit {
   readonly shadowBorderRadius = input<number>(2);
 
-  private readonly el = inject(ElementRef);
+  private readonly el = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly renderer = inject(Renderer2);
 
   public ngOnInit() {
@@ -36,7 +36,7 @@ export class OuterShadowRoundedDirective implements OnInit {
   selector: '[inner-shadow]',
 })
 export class InnerShadowDirective implements OnInit {
-  private readonly el = inject(ElementRef);
+  private readonly el = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly renderer = inject(Renderer2);
 
   public ngOnInit() {
@@ -52,7 +52,7 @@ export class InnerShadowDirective implements OnInit {
 export class InnerShadowRoundedDirective implements OnInit {
   readonly shadowBorderRadius = input<number>(2);
 
-  private readonly el = inject(ElementRef);
+  private readonly el = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly renderer = inject(Renderer2);
 
   public ngOnInit() {

@@ -13,7 +13,7 @@ const AUTO_SUBMIT_DELAY_MS = 50;
     <v-input [formField]="weightForm.weight"
              [isAutoSubmitEnabled]="true"
              [autoSubmitDelay]="autoSubmitDelayMs"
-             (onAutoSubmit)="submitted.push($event)" />
+             (autoSubmitOutput)="submitted.push($event)" />
   `,
 })
 class VInputHost {

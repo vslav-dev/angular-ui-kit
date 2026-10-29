@@ -40,7 +40,7 @@ tabindex: number | string
 
 ## Events
 
-- `onClick: MouseEvent`
+- `clickOutput: MouseEvent`
 
 ## Examples
 
