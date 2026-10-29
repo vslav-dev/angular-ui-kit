@@ -1,15 +1,13 @@
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   computed,
   ElementRef,
   forwardRef,
-  Inject,
+  inject,
   input,
   OnDestroy,
   OnInit,
-  Optional,
   output,
   signal,
   viewChild,
@@ -60,7 +58,7 @@ export type DropdownMode = (typeof DropdownMode)[keyof typeof DropdownMode];
     },
   ],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [CommonModule, VInput, VIcon, ReactiveFormsModule],
+  imports: [VInput, VIcon, ReactiveFormsModule],
 })
 export class VDropdown implements ControlValueAccessor, OnInit, OnDestroy {
   public readonly mode = input<DropdownMode>(DropdownMode.Search);
@@ -115,13 +113,11 @@ export class VDropdown implements ControlValueAccessor, OnInit, OnDestroy {
   private onTouched = () => {};
   private layerController?: LayerController;
 
-  constructor(
-    private readonly elementRef: ElementRef,
-    private readonly zLayerService: ZLayerService,
-    @Optional()
-    @Inject(PARENT_LAYER_ID)
-    private readonly parentLayerId?: string,
-  ) {
+  private readonly elementRef = inject(ElementRef);
+  private readonly zLayerService = inject(ZLayerService);
+  private readonly parentLayerId = inject(PARENT_LAYER_ID, { optional: true }) ?? undefined;
+
+  constructor() {
     this.internalForm.get('search')?.valueChanges.subscribe((value) => {
       this.value$$.set(value || '');
 

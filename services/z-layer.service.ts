@@ -1,4 +1,4 @@
-import { Injectable, InjectionToken } from '@angular/core';
+import { InjectionToken, Service } from '@angular/core';
 
 /**
  * Token for passing parent layer ID through Angular DI.
@@ -64,9 +64,7 @@ export class LayerController {
  * Base z-index: 100
  * Modal: base + 1, Dropdown: parent + 100, Tooltip: parent + 200, Backdrop: parent - 10
  */
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class ZLayerService {
   /** Base z-index — the floor for top-level (parentless) layers */
   private readonly baseZIndex = 100;

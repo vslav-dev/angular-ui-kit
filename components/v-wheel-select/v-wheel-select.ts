@@ -2,13 +2,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  HostListener,
   inject,
-  Inject,
   input,
   OnDestroy,
   OnInit,
-  Optional,
   output,
   signal,
   viewChild,
@@ -35,6 +32,8 @@ function clamp(value: number, min: number, max: number): number {
   changeDetection: ChangeDetectionStrategy.Eager,
   host: {
     '[style.--v-wheel-select-z-index]': 'zIndex$$()',
+    '(document:pointerdown)': 'onDocumentPointerDown($event)',
+    '(document:keydown.escape)': 'onEscape()',
   },
 })
 export class VWheelSelect implements OnInit, OnDestroy {
@@ -57,13 +56,8 @@ export class VWheelSelect implements OnInit, OnDestroy {
 
   private readonly elementRef = inject(ElementRef<HTMLElement>);
   private readonly zLayerService = inject(ZLayerService);
+  private readonly parentLayerId = inject(PARENT_LAYER_ID, { optional: true }) ?? undefined;
   private layerController: LayerController | null = null;
-
-  constructor(
-    @Optional()
-    @Inject(PARENT_LAYER_ID)
-    private readonly parentLayerId?: string,
-  ) {}
 
   public ngOnInit(): void {
     this.layerController = this.zLayerService.registerLayer('dropdown', this.parentLayerId);
@@ -74,7 +68,6 @@ export class VWheelSelect implements OnInit, OnDestroy {
     this.layerController?.destroy();
   }
 
-  @HostListener('document:pointerdown', ['$event'])
   protected onDocumentPointerDown(event: PointerEvent): void {
     if (!this.isOpen$$()) return;
     const target = event.target as Node | null;
@@ -82,7 +75,6 @@ export class VWheelSelect implements OnInit, OnDestroy {
     this.closePicker();
   }
 
-  @HostListener('document:keydown.escape')
   protected onEscape(): void {
     if (this.isOpen$$()) this.closePicker();
   }

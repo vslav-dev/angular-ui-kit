@@ -1,12 +1,10 @@
-import { Injectable, signal } from '@angular/core';
+import { Service, signal } from '@angular/core';
 
 interface GroupState {
   openedItemKey: string | null;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class AccordionGroupService {
   public readonly groups$$ = signal<Map<string, GroupState>>(new Map());
 

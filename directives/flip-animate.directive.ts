@@ -1,4 +1,4 @@
-import { Directive, ElementRef, OnDestroy, OnInit, input } from '@angular/core';
+import { Directive, ElementRef, OnDestroy, OnInit, inject, input } from '@angular/core';
 
 interface ElementPosition {
   element: HTMLElement;
@@ -13,7 +13,6 @@ interface AnimationOptions {
 
 @Directive({
   selector: '[flipAnimate]',
-  standalone: true,
 })
 export class FlipAnimateDirective implements OnInit, OnDestroy {
   readonly flipAnimateDuration = input(200);
@@ -25,7 +24,7 @@ export class FlipAnimateDirective implements OnInit, OnDestroy {
   private debounceTimeout?: ReturnType<typeof setTimeout>;
   private isAnimating = false;
 
-  constructor(private elementRef: ElementRef<HTMLElement>) {}
+  private readonly elementRef = inject(ElementRef<HTMLElement>);
 
   public ngOnInit(): void {
     this.captureInitialPositions();

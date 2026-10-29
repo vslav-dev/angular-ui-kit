@@ -3,7 +3,6 @@ import {
   Component,
   computed,
   effect,
-  HostListener,
   inject,
   input,
   output,
@@ -30,6 +29,7 @@ export type ModalDeviceType = (typeof ModalDeviceType)[keyof typeof ModalDeviceT
     '[style.--v-modal-z-index]': 'zIndex',
     '[style.--v-modal-padding-x]': 'paddingXString$$()',
     '[style.--v-modal-padding-y]': 'paddingYString$$()',
+    '(document:keydown.escape)': 'onEscapeKey()',
   },
   providers: [
     {
@@ -86,7 +86,6 @@ export class VModal {
     this.layerController?.destroy();
   }
 
-  @HostListener('document:keydown.escape')
   protected onEscapeKey(): void {
     if (this.isOpen()) {
       this.closeModal();

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, ElementRef, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, input } from '@angular/core';
 
 @Component({
   selector: 'ui-progress-icon',
@@ -13,6 +13,8 @@ export class UiProgressIcon {
   public readonly strokeWidthPie = input(0);
   public readonly color = input('var(--v-color-text)');
   public readonly backgroundColor = input('var(--v-color-border-subtle)');
+
+  private readonly elementRef = inject(ElementRef);
 
   protected readonly isCircle$$ = computed(() => {
     const element = this.elementRef.nativeElement;
@@ -30,8 +32,6 @@ export class UiProgressIcon {
   protected readonly progressRatio$$ = computed(() => this.clampedProgress$$() / 100);
   protected readonly dashoffset$$ = computed(() => this.circumference$$() * (1 - this.progressRatio$$()));
   protected readonly piePathData$$ = computed(() => this.buildPiePath(this.progressRatio$$()));
-
-  constructor(private readonly elementRef: ElementRef) {}
 
   private buildPiePath(progress: number): string {
     if (progress <= 0) {

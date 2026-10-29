@@ -22,7 +22,7 @@
              class="selected-item-icon">
           <v-icon [name]="selectedItem.iconName"
                   [size]="4"
-                  [ngStyle]="iconRotationStyle(selectedItem)" />
+                  [style]="iconRotationStyle(selectedItem)" />
         </div>
       }
     }
@@ -48,7 +48,7 @@
 
   @if (isOpen$$() && filteredItems$$().length > 0) {
     <div class="dropdown-list"
-         [ngStyle]="dropdownListStyles$$()">
+         [style]="dropdownListStyles$$()">
       @for (item of filteredItems$$(); track item.value) {
         <div class="dropdown-item"
              [class.selected]="item.value === selectedValue$$()"
@@ -65,7 +65,7 @@
               @if (item.iconName) {
                 <v-icon [name]="item.iconName"
                         [size]="4"
-                        [ngStyle]="iconRotationStyle(item)" />
+                        [style]="iconRotationStyle(item)" />
               }
             </span>
           }
@@ -76,7 +76,7 @@
 
   @if (isOpen$$() && filteredItems$$().length === 0 && value$$()) {
     <div class="dropdown-list"
-         [ngStyle]="dropdownListStyles$$()">
+         [style]="dropdownListStyles$$()">
       <div class="dropdown-item empty">
         No items found
       </div>

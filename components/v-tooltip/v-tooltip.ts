@@ -3,11 +3,9 @@ import {
   Component,
   computed,
   ElementRef,
-  Inject,
   inject,
   input,
   OnDestroy,
-  Optional,
   signal,
   viewChild,
 } from '@angular/core';
@@ -46,16 +44,11 @@ export class VTooltip implements OnDestroy {
   protected readonly zIndex$$ = computed(() => this.layerController.zIndex);
 
   private readonly zLayerService = inject(ZLayerService);
-  private readonly layerController: LayerController;
+  private readonly layerController: LayerController = this.zLayerService.registerLayer(
+    'tooltip',
+    inject(PARENT_LAYER_ID, { optional: true }) ?? undefined,
+  );
   private outsideTouchListener: ((event: TouchEvent) => void) | null = null;
-
-  constructor(
-    @Optional()
-    @Inject(PARENT_LAYER_ID)
-    parentLayerId?: string,
-  ) {
-    this.layerController = this.zLayerService.registerLayer('tooltip', parentLayerId);
-  }
 
   public ngOnDestroy(): void {
     this.stopWatchingOutsideTouch();

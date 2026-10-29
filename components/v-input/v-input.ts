@@ -4,12 +4,11 @@ import {
   computed,
   effect,
   ElementRef,
+  inject,
   input,
   model,
   OnDestroy,
-  Optional,
   output,
-  Self,
   signal,
   viewChild,
   WritableSignal,
@@ -129,11 +128,9 @@ export class VInput implements ControlValueAccessor, OnDestroy {
 
   protected readonly vInputAutoSubmitState = VInputAutoSubmitState;
 
-  constructor(
-    @Optional()
-    @Self()
-    public ngControl: NgControl | null,
-  ) {
+  public readonly ngControl = inject(NgControl, { optional: true, self: true });
+
+  constructor() {
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
     }

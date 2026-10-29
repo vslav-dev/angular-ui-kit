@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Inject, OnDestroy, Optional, computed, effect, input, output } from '@angular/core';
+import { Directive, ElementRef, OnDestroy, computed, effect, inject, input, output } from '@angular/core';
 import { PARENT_LAYER_ID, ZLayerService } from '@ui-kit/services/z-layer.service';
 
 @Directive({
@@ -17,14 +17,11 @@ export class VBackdropDirective implements OnDestroy {
   private backdropElement: HTMLElement | null = null;
   private clickListener: ((event: Event) => void) | null = null;
 
-  constructor(
-    private readonly elementRef: ElementRef,
-    @Optional()
-    private readonly zLayerService?: ZLayerService,
-    @Optional()
-    @Inject(PARENT_LAYER_ID)
-    private readonly parentLayerId?: string,
-  ) {
+  private readonly elementRef = inject(ElementRef);
+  private readonly zLayerService = inject(ZLayerService, { optional: true });
+  private readonly parentLayerId = inject(PARENT_LAYER_ID, { optional: true });
+
+  constructor() {
     effect(() => {
       if (this.isWithBackdrop()) {
         this.showBackdrop();
