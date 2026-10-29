@@ -1,5 +1,4 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
@@ -40,7 +39,6 @@ export type ModalDeviceType = (typeof ModalDeviceType)[keyof typeof ModalDeviceT
       deps: [VModal],
     },
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [VButton, VBackdropDirective],
 })
 export class VModal implements OnDestroy {

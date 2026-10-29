@@ -15,9 +15,9 @@ interface AnimationOptions {
   selector: '[flipAnimate]',
 })
 export class FlipAnimateDirective implements OnInit, OnDestroy {
-  readonly flipAnimateDuration = input(200);
-  readonly flipAnimateEasing = input('ease-out');
-  readonly flipAnimateChildSelector = input('*');
+  public readonly flipAnimateDuration = input(200);
+  public readonly flipAnimateEasing = input('ease-out');
+  public readonly flipAnimateChildSelector = input('*');
 
   private mutationObserver?: MutationObserver;
   private previousPositions = new Map<string, ElementPosition>();

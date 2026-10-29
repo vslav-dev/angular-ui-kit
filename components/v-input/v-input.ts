@@ -1,6 +1,5 @@
 import {
   afterNextRender,
-  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
@@ -50,7 +49,6 @@ let uniqueId = 0;
     '[class.success-state]': 'autoSubmitState$$() === vInputAutoSubmitState.Success',
     '[class.error-state]': 'autoSubmitState$$() === vInputAutoSubmitState.Error',
   },
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [],
 })
 export class VInput implements FormValueControl<string>, OnDestroy {

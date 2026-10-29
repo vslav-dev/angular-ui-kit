@@ -1,5 +1,4 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
@@ -54,7 +53,6 @@ let uniqueId = 0;
     '[style.--v-dropdown-anchor]': 'anchorName',
     '[attr.expand-direction]': 'expandDirection()',
   },
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [VInput, VIcon],
 })
 export class VDropdown implements OnInit, OnDestroy {

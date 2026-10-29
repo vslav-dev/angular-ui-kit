@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, model, untracked } from '@angular/core';
+import { Component, computed, effect, input, model, untracked } from '@angular/core';
 import { VWheelSelect, WheelSelectItem } from '@ui-kit/components/v-wheel-select/v-wheel-select';
 
 export interface WheelInputSegment {
@@ -11,7 +11,6 @@ export interface WheelInputSegment {
   selector: 'v-wheel-input',
   templateUrl: './v-wheel-input.html',
   styleUrl: './v-wheel-input.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [VWheelSelect],
 })
 export class VWheelInput {

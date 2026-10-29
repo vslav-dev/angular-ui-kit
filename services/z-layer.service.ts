@@ -28,7 +28,7 @@ interface LayerEntry {
  * Provides methods for getting backdrop z-index and destroying the layer.
  */
 export class LayerController {
-  constructor(
+  public constructor(
     public readonly id: string,
     /** Calculated z-index for this layer */
     public readonly zIndex: number,
@@ -73,7 +73,7 @@ export class ZLayerService {
   private idCounter = 0;
 
   /** Registry of all registered layers */
-  private layers = new Map<string, LayerEntry>();
+  private readonly layers = new Map<string, LayerEntry>();
 
   /**
    * Registers new layer and returns controller for managing it.

@@ -1,6 +1,5 @@
 import {
   afterNextRender,
-  ChangeDetectionStrategy,
   Component,
   computed,
   DestroyRef,
@@ -32,7 +31,6 @@ type DragState = {
   selector: 'v-slider',
   templateUrl: './v-slider.html',
   styleUrl: './v-slider.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class.touch-mode]': 'isTouchMode()',
     '[class.dragging]': 'isDragging$$()',
@@ -194,7 +192,7 @@ export class VSlider {
     }
   });
 
-  constructor() {
+  public constructor() {
     afterNextRender(() => {
       const track = this.trackElement().nativeElement;
       const observer = new ResizeObserver(() => this.trackWidth$$.set(track.clientWidth));

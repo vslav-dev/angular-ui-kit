@@ -1,7 +1,5 @@
 import {
-  ChangeDetectionStrategy,
   Component,
-  computed,
   ElementRef,
   inject,
   input,
@@ -16,9 +14,8 @@ import { computeTooltipPosition } from './tooltip-position';
   selector: 'v-tooltip',
   templateUrl: './v-tooltip.html',
   styleUrl: './v-tooltip.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    '[style.--v-tooltip-z-index]': 'zIndex$$()',
+    '[style.--v-tooltip-z-index]': 'zIndex',
     '[class.fill]': 'fill()',
     '[class.no-wrap]': 'noWrap()',
   },
@@ -41,13 +38,14 @@ export class VTooltip implements OnDestroy {
   protected readonly placement$$ = signal<'top' | 'bottom'>('top');
   protected readonly fixedTop$$ = signal(0);
   protected readonly fixedLeft$$ = signal(0);
-  protected readonly zIndex$$ = computed(() => this.layerController.zIndex);
 
   private readonly zLayerService = inject(ZLayerService);
   private readonly layerController: LayerController = this.zLayerService.registerLayer(
     'tooltip',
     inject(PARENT_LAYER_ID, { optional: true }) ?? undefined,
   );
+
+  protected readonly zIndex = this.layerController.zIndex;
   private outsideTouchListener: ((event: TouchEvent) => void) | null = null;
 
   public ngOnDestroy(): void {

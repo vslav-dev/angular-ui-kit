@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
+import { Component, computed, effect, input, output, signal } from '@angular/core';
 import { IconName, VIcon } from '@ui-kit/components/v-icon/v-icon';
 import { CssUnitOrRawValue, resolveCssUnitOrRawValue } from '@ui-kit/types';
 import { AccordionItemPosition } from './v-accordion';
@@ -8,7 +8,6 @@ import { AccordionItemPosition } from './v-accordion';
   templateUrl: './v-expand.html',
   styleUrl: './v-expand.css',
   imports: [VIcon],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[style.--v-expand-padding]': 'paddingString$$()',
     '[style.--v-expand-border-radius]': 'borderRadiusString$$()',

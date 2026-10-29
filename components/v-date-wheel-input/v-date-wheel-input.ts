@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, model } from '@angular/core';
+import { Component, computed, input, model } from '@angular/core';
 import { VWheelInput, WheelInputSegment } from '@ui-kit/components/v-wheel-input/v-wheel-input';
 import { WheelSelectItem } from '@ui-kit/components/v-wheel-select/v-wheel-select';
 
@@ -29,7 +29,6 @@ function partsToIso(values: Record<string, string>): string {
 @Component({
   selector: 'v-date-wheel-input',
   templateUrl: './v-date-wheel-input.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [VWheelInput],
 })
 export class VDateWheelInput {

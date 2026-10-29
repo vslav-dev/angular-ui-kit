@@ -21,7 +21,7 @@ export class VBackdropDirective implements OnDestroy {
   private readonly zLayerService = inject(ZLayerService, { optional: true });
   private readonly parentLayerId = inject(PARENT_LAYER_ID, { optional: true });
 
-  constructor() {
+  public constructor() {
     effect(() => {
       if (this.isWithBackdrop()) {
         this.showBackdrop();

@@ -1,5 +1,4 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   contentChildren,
   effect,
@@ -23,7 +22,6 @@ export interface AccordionItemPosition {
 @Component({
   selector: 'v-accordion',
   template: '<ng-content />',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'v-accordion-group',
     style: 'display: block;',

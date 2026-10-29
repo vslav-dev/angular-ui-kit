@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, input } from '@angular/core';
+import { Component, computed, ElementRef, inject, input } from '@angular/core';
 
 @Component({
   selector: 'ui-progress-icon',
   templateUrl: './progress-icon.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './progress-icon.component.scss',
 })
 export class UiProgressIcon {
@@ -16,15 +15,8 @@ export class UiProgressIcon {
 
   private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
 
-  protected readonly isCircle$$ = computed(() => {
-    const element = this.elementRef.nativeElement;
-    return !element.hasAttribute('pieStyle');
-  });
-
-  protected readonly isPie$$ = computed(() => {
-    const element = this.elementRef.nativeElement;
-    return element.hasAttribute('pieStyle');
-  });
+  protected readonly isPie = this.elementRef.nativeElement.hasAttribute('pieStyle');
+  protected readonly isCircle = !this.isPie;
 
   protected readonly radius$$ = computed(() => (this.diameter() - this.strokeWidthCircle()) / 2);
   protected readonly circumference$$ = computed(() => 2 * Math.PI * this.radius$$());

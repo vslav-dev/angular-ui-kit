@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { IconName, VIcon } from '@ui-kit/components/v-icon/v-icon';
 
 @Component({
@@ -6,7 +6,6 @@ import { IconName, VIcon } from '@ui-kit/components/v-icon/v-icon';
   templateUrl: './v-chip.html',
   styleUrl: './v-chip.css',
   imports: [VIcon],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class.disabled]': 'isDisabled()',
   },

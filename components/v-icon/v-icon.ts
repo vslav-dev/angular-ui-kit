@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { CssUnitOrRawValue, resolveCssUnitOrRawValue } from '@ui-kit/types';
 
 export const IconName = {
@@ -120,7 +120,6 @@ export type IconName = (typeof IconName)[keyof typeof IconName];
   selector: 'v-icon',
   templateUrl: './v-icon.html',
   styleUrl: './v-icon.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[style.--v-icon-size]': 'iconUnitSizeString$$()',
     '[style.--v-icon-background]': 'iconBackgroundString$$()',

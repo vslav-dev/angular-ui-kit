@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { CssUnitOrRawValue, resolveCssUnitOrRawValue } from '@ui-kit/types';
 
 @Component({
   selector: 'v-progress',
   templateUrl: './v-progress.html',
   styleUrl: './v-progress.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[style.--v-progress-height]': 'heightString$$()',
     '[style.--v-progress-border-radius]': 'borderRadiusString$$()',

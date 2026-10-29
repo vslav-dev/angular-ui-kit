@@ -18,7 +18,7 @@ export class OuterShadowDirective implements OnInit {
   selector: '[outer-shadow-rounded]',
 })
 export class OuterShadowRoundedDirective implements OnInit {
-  readonly shadowBorderRadius = input<number>(2);
+  public readonly shadowBorderRadius = input<number>(2);
 
   private readonly el = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly renderer = inject(Renderer2);
@@ -50,7 +50,7 @@ export class InnerShadowDirective implements OnInit {
   selector: '[inner-shadow-rounded]',
 })
 export class InnerShadowRoundedDirective implements OnInit {
-  readonly shadowBorderRadius = input<number>(2);
+  public readonly shadowBorderRadius = input<number>(2);
 
   private readonly el = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly renderer = inject(Renderer2);

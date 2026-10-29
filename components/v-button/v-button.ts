@@ -1,5 +1,4 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   computed,
   ElementRef,
@@ -27,7 +26,6 @@ export type ButtonSurface = (typeof ButtonSurface)[keyof typeof ButtonSurface];
   selector: 'v-button',
   templateUrl: './v-button.html',
   styleUrl: './v-button.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[style.width]': 'width() || null',
     '[style.--v-button-border-radius]': 'borderRadiusString$$()',

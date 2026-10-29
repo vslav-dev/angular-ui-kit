@@ -17,10 +17,10 @@
          [style.padding-top.px]="rowPaddingPx()"
          [style.padding-bottom.px]="rowPaddingPx()"
          (scroll)="onScroll()">
-      @for (item of items(); track item.value; let i = $index) {
+      @for (item of items(); track item.value) {
         <div class="wheel-row"
              [style.height.px]="rowHeightPx"
-             [class.selected]="isRowPending(i)"
+             [class.selected]="isRowPending($index)"
              (click)="selectRow(item)">{{ item.label }}</div>
       }
     </div>

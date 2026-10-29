@@ -1,10 +1,10 @@
 <svg [attr.width]="diameter()"
      [attr.height]="diameter()"
-     [attr.viewBox]="'0 0 ' + diameter() + ' ' + diameter()"
-     [class.is-circle-style]="isCircle$$()"
+     [attr.viewBox]="`0 0 ${diameter()} ${diameter()}`"
+     [class.is-circle-style]="isCircle"
      class="progress-circle">
 
-  @if (isCircle$$()) {
+  @if (isCircle) {
     <!-- Background circle -->
     <circle [attr.cx]="diameter() / 2"
             [attr.cy]="diameter() / 2"
@@ -25,7 +25,7 @@
             stroke-linecap="round" />
   }
 
-  @if (isPie$$()) {
+  @if (isPie) {
     <!-- Background circle -->
     <circle [attr.cx]="diameter() / 2"
             [attr.cy]="diameter() / 2"

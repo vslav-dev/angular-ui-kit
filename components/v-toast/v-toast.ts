@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { VButton } from '@ui-kit/components/v-button/v-button';
 import { IconName, VIcon } from '@ui-kit/components/v-icon/v-icon';
 
@@ -12,7 +12,6 @@ export type VToastType = 'success' | 'error' | 'warning' | 'info';
     '[attr.data-type]': 'type()',
     '(click)': 'close()',
   },
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [VButton, VIcon],
 })
 export class VToast {

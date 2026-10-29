@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, model, output } from '@angular/core';
+import { Component, computed, input, model, output } from '@angular/core';
 import { CssUnitOrRawValue, resolveCssUnitOrRawValue } from '@ui-kit/types';
 
 const DEFAULT_PRESETS: string[] = [
@@ -24,7 +24,6 @@ const DEFAULT_PRESETS: string[] = [
     '[style.--v-color-picker-swatch-size]': 'swatchSizeString$$()',
     '[style.--v-color-picker-gap]': 'gapString$$()',
   },
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VColorPicker {
   public readonly presets = input<string[]>(DEFAULT_PRESETS);

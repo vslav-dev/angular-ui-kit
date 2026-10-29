@@ -1,12 +1,11 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   ElementRef,
   inject,
   input,
   OnDestroy,
+  model,
   OnInit,
-  output,
   signal,
   viewChild,
 } from '@angular/core';
@@ -29,7 +28,6 @@ function clamp(value: number, min: number, max: number): number {
   selector: 'v-wheel-select',
   templateUrl: './v-wheel-select.html',
   styleUrl: './v-wheel-select.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[style.--v-wheel-select-z-index]': 'zIndex$$()',
     '(document:pointerdown)': 'onDocumentPointerDown($event)',
@@ -38,11 +36,9 @@ function clamp(value: number, min: number, max: number): number {
 })
 export class VWheelSelect implements OnInit, OnDestroy {
   public readonly items = input.required<WheelSelectItem[]>();
-  public readonly value = input<string>('');
+  public readonly value = model<string>('');
   public readonly isDisabled = input<boolean>(false);
   public readonly visibleRows = input<number>(5);
-
-  public readonly valueChange = output<string>();
 
   protected readonly scrollElem = viewChild<ElementRef<HTMLElement>>('scrollElem');
 
@@ -107,7 +103,7 @@ export class VWheelSelect implements OnInit, OnDestroy {
   }
 
   protected selectRow(item: WheelSelectItem): void {
-    if (item.value !== this.value()) this.valueChange.emit(item.value);
+    this.value.set(item.value);
     this.closePicker();
   }
 
